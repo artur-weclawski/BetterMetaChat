@@ -8,6 +8,7 @@ Extension to chrome based browsers adding emotes to Meta communicators.
 * [Instalation](#instalation)
   * [Requirements](#requirements)
   * [Instalation process](#instalation-process)
+* [Changelog](#changelog)
 
 ## General info
 This project is inspired by [BetterTTV](https://betterttv.com/) and [7tv](https://7tv.app/) (extensions to [Twitch](https://twitch.tv)).
@@ -30,3 +31,12 @@ Thanks to identical chat structure it works on [Facebook](https://facebook.com/)
 Chrome based browser (the extension uses manifest v3).
 ### Instalation process
 ...
+
+## Changelog
+### v1.0 (01-30-2025)
+ * Added replacing text with emotes.
+ * Added encrypting and decrypting data for easier storing and sharing emotes sets.
+ * Added different styling for single emote and message containing text and emotes.
+ * Added a title (on hover) to emotes (easier to identify).
+ * Added JSON file with set of few default emotes.
+ * Emotes are now saved and retrieved from chrome.storage.local rather than only from a file (initialization or empty storage).
