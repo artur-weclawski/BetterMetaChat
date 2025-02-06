@@ -34,6 +34,11 @@ Chrome based browser (the extension uses manifest v3).
 
 ## Changelog
 
+### v1.1.1 (06-02-2025)
+ * Added bigger size for single emote in message.
+
+---
+
 ### v1.1 (06-02-2025)
  * Added Emotes class.
  * Added sorting emotes: first alphabetically, then by the length.

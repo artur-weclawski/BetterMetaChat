@@ -209,8 +209,10 @@ function replaceTextInMessages() {
                 const style = isOnlyEmote
                     ? "margin-bottom: -10px; padding-bottom: 5px;" // Added extra padding for single emote in message.
                     : "margin-bottom: -10px;";
-
-                return '<img src="' + emoteURL +'" alt="' + match + '" title="' + match + '" style="'+ style + '" >';
+                const size = isOnlyEmote
+                    ? "3x" // Added extra size for single emote in message.
+                    : "1x";
+                return '<img src="' + "https://cdn.7tv.app/emote/" + emoteURL + "/" + size + ".webp" +'" alt="' + match + '" title="' + match + '" style="'+ style + '" >';
             });
             if (changedText === originalText) return;
 
