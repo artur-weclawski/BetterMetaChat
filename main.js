@@ -1,3 +1,68 @@
+class Emotes {
+
+    // Map of emotes.
+    #map;
+
+    // String used to store and share data.
+    #shareCode;
+    
+    // Initialize the map as null and shareCode as an empty string.
+    constructor() {
+        this.#map = null;
+        this.#shareCode = "";
+    }
+
+     // Get the current map of emotes.
+    getMap() {
+        return this.#map;
+    }
+
+    // Set a new map, sorting it before.
+    setMap(newMap) {
+        this.#map = Emotes.sortMap(newMap);
+    }
+
+    // Get the current share code.
+    getShareCode() {
+        return this.#shareCode;
+    }
+    
+    // Set a new share code.
+    setShareCode(code) {
+            this.#shareCode = code;
+    }
+
+    // Add a new emote to the map and re-sort the map.
+    addEmote(key, value) {
+        this.#map[key] = value;
+        this.#map = Emotes.sortMap(this.#map);
+    }
+
+    // Remove an emote from the map and re-sort the map.
+    removeEmote(key) {
+        delete this.#map[key];
+        this.#map = Emotes.sortMap(this.#map);
+    }
+
+    // Get a specific emote by key.
+    getEmote(key) {
+        return this.#map[key];
+    }
+
+    // Sort the given map: first alphabetically by key, then by the length of the key if keys are identical.
+    static sortMap(map) {
+        return Object.fromEntries(
+            Object.entries(map).sort((a, b) => {
+                const alphaSort = a[0].toLowerCase().localeCompare(b[0].toLowerCase());
+                if (alphaSort !== 0) {
+                    return alphaSort;
+                }
+                return b[0].length - a[0].length;
+            })
+        );
+    }
+}
+
 // File with prepared set of emotes.
 const DEFAULT_EMOTES_URL = chrome.runtime.getURL('default_emotes/emotes.json');
 
@@ -16,12 +81,11 @@ const PRIVATE_KEY = new Uint8Array([
     101, 99, 108, 97, 119, 115, 107, 105
 ]);
 
-// Map of emotes converted from JSON.
-let emoteMap = null;
-
 // Crypto key for encryption and decryption data.
 let cryptoKey = null;
 
+// Initializes [emotes] object.
+const emotes = new Emotes();
 
 // Generetes Crypto Key for encrypting and decrypting data .
 // @return Generated crypto key.
@@ -78,8 +142,8 @@ function updateEmotesInStorage(data) {
         encryptData(data).then((encryptedData) => {
 
             // Converted encrypted data to a String used to store it in chrome.storage.local.
-            const encryptedDataInBase64String = btoa(String.fromCharCode(...new Uint8Array(encryptedData)));
-            chrome.storage.local.set({ emoteMap: encryptedDataInBase64String }, () => {
+            emotes.setShareCode(btoa(String.fromCharCode(...new Uint8Array(encryptedData))));
+            chrome.storage.local.set({ emoteMap: emotes.getShareCode() }, () => {
                 if (chrome.runtime.lastError) {
                     console.log("Unable to update data.");
                     reject(chrome.runtime.lastError);
@@ -96,7 +160,7 @@ function updateEmotesInStorage(data) {
 
 
 // Initializes the emote map by loading and decrypting stored data or fetching default data from file.
-// @return Resolves with the decrypted or fetched [emoteMap] object.
+// @return Resolves with the decrypted or fetched [emotes.map].
 function initializeEmotes() {
 
     return new Promise((resolve, reject) => {
@@ -105,8 +169,8 @@ function initializeEmotes() {
                 try {
                     // Converted encrypted data to a Uint8Array to decode.
                     const encryptedDataInUint8Array = new Uint8Array(atob(result.emoteMap).split('').map(c => c.charCodeAt(0)));
-                    emoteMap = await decryptData(encryptedDataInUint8Array);
-                    resolve(emoteMap);
+                    emotes.setMap(await decryptData(encryptedDataInUint8Array));
+                    resolve();
                 } catch (error) {
                     console.log("Unable to save data to emoteMap: ", error);
                     reject(error);
@@ -114,9 +178,9 @@ function initializeEmotes() {
             } else { // If chrome.storage.local is empty.
                 try {
                     const response = await fetch(DEFAULT_EMOTES_URL); // Fetched data from file.
-                    emoteMap = await response.json(); // Saved data to [emoteMap].
-                    await updateEmotesInStorage(emoteMap);
-                    resolve(emoteMap);
+                    emotes.setMap(await response.json()); // Saved data to [emotes.map].
+                    await updateEmotesInStorage(emotes.getMap());
+                    resolve();
                 } catch (error) {
                     console.log("Unable to fetch data from default file: ", error);
                     reject(error);
@@ -126,11 +190,9 @@ function initializeEmotes() {
     });
 }
 
-
-// Replaces text in messages to emotes from [emoteMap].
+// Replaces text in messages to emotes from [emotes.map].
 function replaceTextInMessages() {
-    if (!emoteMap) return;
-
+    if (!emotes.getMap()) return;
     // Query selector with collected all message bubbles.
     const messages = document.querySelectorAll('.html-div.xexx8yu.x4uap5.x18d9i69.xkhd6sd.x1gslohp.x11i5rnm.x12nagc.x1mh8g0r.x1yc453h.x126k92a');
     messages.forEach((message) => {
@@ -138,11 +200,11 @@ function replaceTextInMessages() {
             if (node.nodeType !== Node.TEXT_NODE) return;
 
             const originalText = node.nodeValue; // Text from message.
-            const emotesKeys = Object.keys(emoteMap).join('|'); // Formated keys from [emoteMap] to `a|b|c|...`.
+            const emotesKeys = Object.keys(emotes.getMap()).join('|'); // Formated keys from [emotes.map] to `a|b|c|...`.
             const emoteRegex = new RegExp(`\\b(${emotesKeys})\\b`, 'g'); // Regex with all emotes names.
             const singleEmoteRegex = new RegExp(`^\\s*\\b(${emotesKeys})\\b\\s*$`, 'g'); // [emoteRegex] but for single word with optional spaces.
             const changedText = originalText.replace(emoteRegex, function(match) {
-                const emoteURL = emoteMap[match]; // Emote URL from regex match.
+                const emoteURL = emotes.getEmote(match); // Emote URL from regex match.
                 const isOnlyEmote = singleEmoteRegex.test(originalText); // Checks if text contains only single emote.
                 const style = isOnlyEmote
                     ? "margin-bottom: -10px; padding-bottom: 5px;" // Added extra padding for single emote in message.

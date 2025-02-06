@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "Better Meta Chat",
-    "version": "1.0",
+    "version": "1.1",
     "description": "Change text with images.",
     "permissions": ["activeTab", "scripting", "storage"],
     "content_scripts": [

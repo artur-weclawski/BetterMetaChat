@@ -33,7 +33,14 @@ Chrome based browser (the extension uses manifest v3).
 ...
 
 ## Changelog
-### v1.0 (01-30-2025)
+
+### v1.1 (06-02-2025)
+ * Added Emotes class.
+ * Added sorting emotes: first alphabetically, then by the length.
+
+---
+
+### v1.0 (30-01-2025)
  * Added replacing text with emotes.
  * Added encrypting and decrypting data for easier storing and sharing emotes sets.
  * Added different styling for single emote and message containing text and emotes.
