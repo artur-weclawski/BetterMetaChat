@@ -1,25 +1,25 @@
 class Emotes {
 
-    // Map of emotes.
-    #map;
+    // Dictionary of emotes.
+    #dict;
 
     // String used to store and share data.
     #shareCode;
     
-    // Initialize the map as null and shareCode as an empty string.
+    // Initialize the dictionary as null and shareCode as an empty string.
     constructor() {
-        this.#map = null;
+        this.#dict = null;
         this.#shareCode = "";
     }
 
-     // Get the current map of emotes.
-    getMap() {
-        return this.#map;
+     // Get the current dictionary of emotes.
+    getDictionary() {
+        return this.#dict;
     }
 
-    // Set a new map, sorting it before.
-    setMap(newMap) {
-        this.#map = Emotes.sortMap(newMap);
+    // Set a new dictionary, sorting it before.
+    setDictionary(dict) {
+        this.#dict = Emotes.sortDictionary(dict);
     }
 
     // Get the current share code.
@@ -32,27 +32,27 @@ class Emotes {
             this.#shareCode = code;
     }
 
-    // Add a new emote to the map and re-sort the map.
+    // Add a new emote to the dictionary and re-sort the dictionary.
     addEmote(key, value) {
-        this.#map[key] = value;
-        this.#map = Emotes.sortMap(this.#map);
+        this.#dict[key] = value;
+        this.#dict = Emotes.sortDictionary(this.#dict);
     }
 
-    // Remove an emote from the map and re-sort the map.
+    // Remove an emote from the dictionary and re-sort the dictionary.
     removeEmote(key) {
-        delete this.#map[key];
-        this.#map = Emotes.sortMap(this.#map);
+        delete this.#dict[key];
+        this.#dict = Emotes.sortDictionary(this.#dict);
     }
 
     // Get a specific emote by key.
     getEmote(key) {
-        return this.#map[key];
+        return this.#dict[key];
     }
 
-    // Sort the given map: first alphabetically by key, then by the length of the key if keys are identical.
-    static sortMap(map) {
+    // Sort the given dictionary: first alphabetically by key, then by the length of the key if keys are identical.
+    static sortDictionary(dict) {
         return Object.fromEntries(
-            Object.entries(map).sort((a, b) => {
+            Object.entries(dict).sort((a, b) => {
                 const alphaSort = a[0].toLowerCase().localeCompare(b[0].toLowerCase());
                 if (alphaSort !== 0) {
                     return alphaSort;
@@ -133,7 +133,7 @@ async function decryptData(encryptedData) {
 }
 
 
-// Updates emoteMap in chrome.storage.local with new value.
+// Updates [emotes] in chrome.storage.local with new value.
 // @param [data] Data to be saved in chrome.storage.local.
 // @return Resolves when the data is successfully stored.
 function updateEmotesInStorage(data) {
@@ -143,7 +143,7 @@ function updateEmotesInStorage(data) {
 
             // Converted encrypted data to a String used to store it in chrome.storage.local.
             emotes.setShareCode(btoa(String.fromCharCode(...new Uint8Array(encryptedData))));
-            chrome.storage.local.set({ emoteMap: emotes.getShareCode() }, () => {
+            chrome.storage.local.set({ emotes: emotes.getShareCode() }, () => {
                 if (chrome.runtime.lastError) {
                     console.log("Unable to update data.");
                     reject(chrome.runtime.lastError);
@@ -159,27 +159,27 @@ function updateEmotesInStorage(data) {
 }
 
 
-// Initializes the emote map by loading and decrypting stored data or fetching default data from file.
-// @return Resolves with the decrypted or fetched [emotes.map].
+// Initializes the emote dictionary by loading and decrypting stored data or fetching default data from file.
+// @return Resolves with the decrypted or fetched [emotes.dict].
 function initializeEmotes() {
 
     return new Promise((resolve, reject) => {
-        chrome.storage.local.get(['emoteMap'], async (result) => {
-            if (result.emoteMap) {
+        chrome.storage.local.get(['emotes'], async (result) => {
+            if (result.emotes) {
                 try {
                     // Converted encrypted data to a Uint8Array to decode.
-                    const encryptedDataInUint8Array = new Uint8Array(atob(result.emoteMap).split('').map(c => c.charCodeAt(0)));
-                    emotes.setMap(await decryptData(encryptedDataInUint8Array));
+                    const encryptedDataInUint8Array = new Uint8Array(atob(result.emotes).split('').map(c => c.charCodeAt(0)));
+                    emotes.setDictionary(await decryptData(encryptedDataInUint8Array));
                     resolve();
                 } catch (error) {
-                    console.log("Unable to save data to emoteMap: ", error);
+                    console.log("Unable to save data to emotes: ", error);
                     reject(error);
                 }
             } else { // If chrome.storage.local is empty.
                 try {
                     const response = await fetch(DEFAULT_EMOTES_URL); // Fetched data from file.
-                    emotes.setMap(await response.json()); // Saved data to [emotes.map].
-                    await updateEmotesInStorage(emotes.getMap());
+                    emotes.setDictionary(await response.json()); // Saved data to [emotes.dict].
+                    await updateEmotesInStorage(emotes.getDictionary());
                     resolve();
                 } catch (error) {
                     console.log("Unable to fetch data from default file: ", error);
@@ -190,9 +190,9 @@ function initializeEmotes() {
     });
 }
 
-// Replaces text in messages to emotes from [emotes.map].
+// Replaces text in messages to emotes from [emotes.dict].
 function replaceTextInMessages() {
-    if (!emotes.getMap()) return;
+    if (!emotes.getDictionary()) return;
     // Query selector with collected all message bubbles.
     const messages = document.querySelectorAll('.html-div.xexx8yu.x4uap5.x18d9i69.xkhd6sd.x1gslohp.x11i5rnm.x12nagc.x1mh8g0r.x1yc453h.x126k92a');
     messages.forEach((message) => {
@@ -200,17 +200,17 @@ function replaceTextInMessages() {
             if (node.nodeType !== Node.TEXT_NODE) return;
 
             const originalText = node.nodeValue; // Text from message.
-            const emotesKeys = Object.keys(emotes.getMap()).join('|'); // Formated keys from [emotes.map] to `a|b|c|...`.
+            const emotesKeys = Object.keys(emotes.getDictionary()).join('|'); // Formated keys from [emotes.dict] to `a|b|c|...`.
             const emoteRegex = new RegExp(`\\b(${emotesKeys})\\b`, 'g'); // Regex with all emotes names.
             const singleEmoteRegex = new RegExp(`^\\s*\\b(${emotesKeys})\\b\\s*$`, 'g'); // [emoteRegex] but for single word with optional spaces.
             const changedText = originalText.replace(emoteRegex, function(match) {
                 const emoteURL = emotes.getEmote(match); // Emote URL from regex match.
                 const isOnlyEmote = singleEmoteRegex.test(originalText); // Checks if text contains only single emote.
                 const style = isOnlyEmote
-                    ? "margin-bottom: -10px; padding-bottom: 5px;" // Added extra padding for single emote in message.
+                    ? "margin-bottom: -10px; padding-bottom: 5px;" // Adds extra padding for single emote in message.
                     : "margin-bottom: -10px;";
                 const size = isOnlyEmote
-                    ? "3x" // Added extra size for single emote in message.
+                    ? "3x" // Adds bigger size for single emote in message.
                     : "1x";
                 return '<img src="' + "https://cdn.7tv.app/emote/" + emoteURL + "/" + size + ".webp" +'" alt="' + match + '" title="' + match + '" style="'+ style + '" >';
             });
