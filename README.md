@@ -28,7 +28,7 @@ Thanks to identical chat structure it works on [Facebook](https://facebook.com/)
 
 ## Instalation
 ### Requirements
-Chrome based browser (the extension uses manifest v3).
+Browser supporting Chrome extensions.
 ### Instalation process
 ...
 
