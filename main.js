@@ -170,6 +170,7 @@ function initializeEmotes() {
                     // Converted encrypted data to a Uint8Array to decode.
                     const encryptedDataInUint8Array = new Uint8Array(atob(result.emotes).split('').map(c => c.charCodeAt(0)));
                     emotes.setDictionary(await decryptData(encryptedDataInUint8Array));
+                    emotes.setShareCode(result.emotes);
                     resolve();
                 } catch (error) {
                     console.log("Unable to save data to emotes: ", error);
@@ -224,6 +225,74 @@ function replaceTextInMessages() {
 }
 
 
+// Create modal.
+function createModal() {
+    const modalOverlay = document.createElement('div');
+    modalOverlay.style.position = 'fixed';
+    modalOverlay.style.top = '0';
+    modalOverlay.style.left = '0';
+    modalOverlay.style.width = '100vw';
+    modalOverlay.style.height = '100vh';
+    modalOverlay.style.display = 'flex';
+    modalOverlay.style.justifyContent = 'center';
+    modalOverlay.style.alignItems = 'center';
+    modalOverlay.style.zIndex = '10000';
+    modalOverlay.style.visibility = 'hidden';
+  
+    const modalContent = document.createElement('div');
+    modalContent.style.backgroundColor = '#fff';
+    modalContent.style.padding = '20px';
+    modalContent.style.borderRadius = '8px';
+    modalContent.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.2)';
+    modalContent.style.minWidth = '300px';
+    modalContent.style.maxWidth = '90%';
+    modalContent.style.textAlign = 'center';
+  
+    const closeButton = document.createElement('button');
+    closeButton.textContent = 'Close';
+
+    const addNewEmoteButton = document.createElement('button');
+    addNewEmoteButton.textContent = 'Add new emote';
+    const removeEmoteButton = document.createElement('button');
+    removeEmoteButton.textContent = 'Remove emote'; 
+    const shareEmoteseButton = document.createElement('button');
+    shareEmoteseButton.textContent = 'Share emotes';
+  
+    modalContent.innerHTML = `<h2>Temp modal!</h2>`;
+    Object.fromEntries(
+        Object.entries(emotes.getDictionary()).map(([key, value]) => {
+            const img = document.createElement('img')
+            img.src = "https://cdn.7tv.app/emote/" + value + "/2x.webp";
+            img.id = key;
+            img.addEventListener('click', (e) => {
+                console.log("It will open modal with delete or just close it in container with delete button, idk, id: " + e.target.id)
+            })
+            return modalContent.appendChild(img);
+            }));
+    modalContent.appendChild(closeButton);
+    modalContent.appendChild(addNewEmoteButton);
+    modalContent.appendChild(removeEmoteButton);
+    modalContent.appendChild(shareEmoteseButton);
+    modalOverlay.appendChild(modalContent);
+    document.body.appendChild(modalOverlay);
+  
+    closeButton.addEventListener('click', () => {
+      modalOverlay.style.visibility = 'hidden';
+    });
+    shareEmoteseButton.addEventListener('click', () => {
+        navigator.clipboard.writeText(emotes.getShareCode());
+    });
+
+    modalOverlay.addEventListener('click', (e) => {
+      if (e.target === modalOverlay) {
+        modalOverlay.style.visibility = 'hidden';
+      }
+    });
+  
+    return modalOverlay;
+  }
+
+
 generateCryptoKey().then((key) => {
     cryptoKey = key;
 
@@ -234,6 +303,27 @@ generateCryptoKey().then((key) => {
             mutations.forEach((mutation) => {
                 if (mutation.type === 'childList') { // Calls a function to handle text replacements when mutations occur.
                     replaceTextInMessages();
+                }
+                // Original button that opens emote menu.
+                const metaEmojiButton = document.querySelector('[aria-label="Choose an emoji"]');
+
+                if (metaEmojiButton && !metaEmojiButton.parentNode.querySelector('[aria-label="Choose a better emoji"]')) {
+                    const betterMetaChatButton = document.createElement('div');
+                    betterMetaChatButton.role = 'button';
+                    betterMetaChatButton.textContent = '🙁';
+                    betterMetaChatButton.setAttribute('aria-label', 'Choose a better emoji');
+                    betterMetaChatButton.style.height = '24px';
+                    betterMetaChatButton.style.width = '24px';
+                    
+                    // Tworzenie modalu (raz)
+                    const modal = createModal();
+                    // Otwórz modal po kliknięciu
+                    betterMetaChatButton.addEventListener('click', () => {
+                    modal.style.visibility = 'visible';
+                    });
+
+                    // Wstaw nowy przycisk obok emoji
+                    metaEmojiButton.parentNode.insertBefore(betterMetaChatButton, metaEmojiButton.nextSibling);
                 }
             });
         });
