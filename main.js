@@ -1,136 +1,8 @@
-class Emotes {
-
-    // Dictionary of emotes.
-    #dict;
-
-    // String used to store and share data.
-    #shareCode;
-    
-    // Initialize the dictionary as null and shareCode as an empty string.
-    constructor() {
-        this.#dict = null;
-        this.#shareCode = "";
-    }
-
-     // Get the current dictionary of emotes.
-    getDictionary() {
-        return this.#dict;
-    }
-
-    // Set a new dictionary, sorting it before.
-    setDictionary(dict) {
-        this.#dict = Emotes.sortDictionary(dict);
-    }
-
-    // Get the current share code.
-    getShareCode() {
-        return this.#shareCode;
-    }
-    
-    // Set a new share code.
-    setShareCode(code) {
-            this.#shareCode = code;
-    }
-
-    // Add a new emote to the dictionary and re-sort the dictionary.
-    addEmote(key, value) {
-        this.#dict[key] = value;
-        this.#dict = Emotes.sortDictionary(this.#dict);
-    }
-
-    // Remove an emote from the dictionary and re-sort the dictionary.
-    removeEmote(key) {
-        delete this.#dict[key];
-        this.#dict = Emotes.sortDictionary(this.#dict);
-    }
-
-    // Get a specific emote by key.
-    getEmote(key) {
-        return this.#dict[key];
-    }
-
-    // Sort the given dictionary: first alphabetically by key, then by the length of the key if keys are identical.
-    static sortDictionary(dict) {
-        return Object.fromEntries(
-            Object.entries(dict).sort((a, b) => {
-                const alphaSort = a[0].toLowerCase().localeCompare(b[0].toLowerCase());
-                if (alphaSort !== 0) {
-                    return alphaSort;
-                }
-                return b[0].length - a[0].length;
-            })
-        );
-    }
-}
-
 // File with prepared set of emotes.
 const DEFAULT_EMOTES_URL = chrome.runtime.getURL('default_emotes/emotes.json');
 
-// IV variable for AES algorithm.
-const IV = new Uint8Array([
-    103, 105, 116, 104, 
-    117, 98, 32, 98, 
-    101, 108, 111, 119
-]);
-
-// Private Key for AES algorithm.
-const PRIVATE_KEY = new Uint8Array([
-    108, 105, 110, 107, 58, 32, 103, 105, 
-    116, 104, 117, 98, 46, 99, 111, 109, 
-    47, 97, 114, 116, 117, 114, 45, 119, 
-    101, 99, 108, 97, 119, 115, 107, 105
-]);
-
-// Crypto key for encryption and decryption data.
-let cryptoKey = null;
-
 // Initializes [emotes] object.
 const emotes = new Emotes();
-
-// Generetes Crypto Key for encrypting and decrypting data .
-// @return Generated crypto key.
-async function generateCryptoKey() {
-    return await crypto.subtle.importKey(
-        "raw", 
-        PRIVATE_KEY, 
-        { name: "AES-GCM" }, 
-        false, 
-        ["encrypt", "decrypt"]
-    );
-}
-
-
-// Encrypts data.
-// @param [data] Data to be encrypted.
-// @return Encrypted data.
-async function encryptData(data) {
-    const dataInJSONString = JSON.stringify(data);
-    const textEncoder = new TextEncoder();
-    const encodedData = textEncoder.encode(dataInJSONString);
-    const encryptedData = await crypto.subtle.encrypt(
-        { name: "AES-GCM", iv: IV },
-        cryptoKey,
-        encodedData
-    );
-
-    return Array.from(new Uint8Array(encryptedData));
-}
-
-
-// Decrypts data.
-// @param [encryptedData] Data to be decrypted.
-// @return Decrypted data as a parsed JSON object.
-async function decryptData(encryptedData) {
-    const encryptedBytes = new Uint8Array(encryptedData);
-    const decryptedData = await crypto.subtle.decrypt(
-        { name: "AES-GCM", iv: IV },
-        cryptoKey,
-        encryptedBytes
-    );
-
-    const textDecoder = new TextDecoder();
-    return JSON.parse(textDecoder.decode(decryptedData));
-}
 
 
 // Updates [emotes] in chrome.storage.local with new value.
@@ -225,74 +97,6 @@ function replaceTextInMessages() {
 }
 
 
-// Create modal.
-function createModal() {
-    const modalOverlay = document.createElement('div');
-    modalOverlay.style.position = 'fixed';
-    modalOverlay.style.top = '0';
-    modalOverlay.style.left = '0';
-    modalOverlay.style.width = '100vw';
-    modalOverlay.style.height = '100vh';
-    modalOverlay.style.display = 'flex';
-    modalOverlay.style.justifyContent = 'center';
-    modalOverlay.style.alignItems = 'center';
-    modalOverlay.style.zIndex = '10000';
-    modalOverlay.style.visibility = 'hidden';
-  
-    const modalContent = document.createElement('div');
-    modalContent.style.backgroundColor = '#fff';
-    modalContent.style.padding = '20px';
-    modalContent.style.borderRadius = '8px';
-    modalContent.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.2)';
-    modalContent.style.minWidth = '300px';
-    modalContent.style.maxWidth = '90%';
-    modalContent.style.textAlign = 'center';
-  
-    const closeButton = document.createElement('button');
-    closeButton.textContent = 'Close';
-
-    const addNewEmoteButton = document.createElement('button');
-    addNewEmoteButton.textContent = 'Add new emote';
-    const removeEmoteButton = document.createElement('button');
-    removeEmoteButton.textContent = 'Remove emote'; 
-    const shareEmoteseButton = document.createElement('button');
-    shareEmoteseButton.textContent = 'Share emotes';
-  
-    modalContent.innerHTML = `<h2>Temp modal!</h2>`;
-    Object.fromEntries(
-        Object.entries(emotes.getDictionary()).map(([key, value]) => {
-            const img = document.createElement('img')
-            img.src = "https://cdn.7tv.app/emote/" + value + "/2x.webp";
-            img.id = key;
-            img.addEventListener('click', (e) => {
-                console.log("It will open modal with delete or just close it in container with delete button, idk, id: " + e.target.id)
-            })
-            return modalContent.appendChild(img);
-            }));
-    modalContent.appendChild(closeButton);
-    modalContent.appendChild(addNewEmoteButton);
-    modalContent.appendChild(removeEmoteButton);
-    modalContent.appendChild(shareEmoteseButton);
-    modalOverlay.appendChild(modalContent);
-    document.body.appendChild(modalOverlay);
-  
-    closeButton.addEventListener('click', () => {
-      modalOverlay.style.visibility = 'hidden';
-    });
-    shareEmoteseButton.addEventListener('click', () => {
-        navigator.clipboard.writeText(emotes.getShareCode());
-    });
-
-    modalOverlay.addEventListener('click', (e) => {
-      if (e.target === modalOverlay) {
-        modalOverlay.style.visibility = 'hidden';
-      }
-    });
-  
-    return modalOverlay;
-  }
-
-
 generateCryptoKey().then((key) => {
     cryptoKey = key;
 
@@ -315,14 +119,12 @@ generateCryptoKey().then((key) => {
                     betterMetaChatButton.style.height = '24px';
                     betterMetaChatButton.style.width = '24px';
                     
-                    // Tworzenie modalu (raz)
-                    const modal = createModal();
-                    // Otwórz modal po kliknięciu
+                    const modal = createEmoteMenuModal();
+
                     betterMetaChatButton.addEventListener('click', () => {
                     modal.style.visibility = 'visible';
                     });
 
-                    // Wstaw nowy przycisk obok emoji
                     metaEmojiButton.parentNode.insertBefore(betterMetaChatButton, metaEmojiButton.nextSibling);
                 }
             });

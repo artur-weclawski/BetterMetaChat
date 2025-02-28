@@ -7,7 +7,7 @@
     "content_scripts": [
       {
         "matches": ["*://*.messenger.com/*", "*://*.facebook.com/*", "*://*.instagram.com/*"],
-        "js": ["main.js"]
+        "js": ["Emotes.js","cryptography.js","modal.js","main.js"]
       }
     ],
     "web_accessible_resources": [
