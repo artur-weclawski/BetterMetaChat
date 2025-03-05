@@ -7,12 +7,13 @@
     "content_scripts": [
       {
         "matches": ["*://*.messenger.com/*", "*://*.facebook.com/*", "*://*.instagram.com/*"],
-        "js": ["main.js"]
+        "css": ["betterMetaChatStyle.css"],
+        "js": ["Emotes.js", "cryptography.js", "button.js", "input.js", "modal.js", "main.js"]
       }
     ],
     "web_accessible_resources": [
       {
-        "resources": ["default_emotes/emotes.json"],
+        "resources": ["default_emotes/emotes.json", "icons/bmc-icon.svg", "icons/bmc-icon-add.svg", "icons/bmc-icon-remove.svg", "icons/bmc-icon-set.svg", "icons/bmc-icon-share.svg","icons/bmc-icon-accept.svg"],
         "matches": ["*://*.messenger.com/*", "*://*.facebook.com/*", "*://*.instagram.com/*"]
       }
     ]

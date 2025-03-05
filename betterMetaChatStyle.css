@@ -1,0 +1,168 @@
+html.__fb-light-mode{
+    --bmc-bg-color: #fff;
+    --bmc-icon-color: #b0b3b8;
+    --bmc-text-color: #313131;
+    --bmc-button-bg-color: #f3f3f5;
+}
+html.__fb-dark-mode{
+    --bmc-bg-color: #2e2e2e;
+    --bmc-icon-color: #b0b3b8;
+    --bmc-text-color: #9d9fa3;
+    --bmc-button-bg-color: #3a3b3c;
+}
+
+.bmc-emote-container{
+    width: 300px;
+    height: 290px;
+    margin-bottom: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    align-content: flex-start;
+    overflow-y:scroll;
+    gap: 5px;
+}
+.bmc-img-container{
+    position: relative;
+    height: 40px;
+    max-width: 40px;
+    align-self: center;
+    justify-self: center;
+    display: flex;
+}
+.bmc-img-container img{
+    position: relative;
+    height: 40px;
+    max-width: 40px;
+    align-self: center;
+    justify-self: center;
+    cursor: pointer;
+}
+
+.bmc-emote-menu-button{
+    position: fixed;
+    right: anchor(left);
+    bottom: anchor(bottom);
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: center;
+    align-self: anchor-center;
+    anchor-name: --emote-menu-button-anchor;
+    position-anchor: --meta-emoji-button-anchor;
+    cursor: pointer;
+}
+
+.bmc-emote-menu-modal{
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    width: 100vw;
+    height: 100vh; 
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+    z-index: 10000;
+    visibility: hidden;
+}
+.bmc-emote-menu-modal-content {
+    position: fixed;
+    position-anchor: --emote-menu-button-anchor;
+    right: anchor(right);
+    bottom: anchor(top);
+    background-color: var(--bmc-bg-color);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    width: 300px;
+    height: 400px;
+    text-align: center;
+    color: var(--bmc-text-color);
+    display: flex;
+    flex-direction: column;
+}
+[aria-label="Choose an emoji"], 
+[aria-label="Wybierz ikonę emoji"]
+{
+    anchor-name: --meta-emoji-button-anchor;
+}
+
+.bmc-add-emote-container, .bmc-remove-emote-container, .bmc-load-emote-set-container{
+    width: 300px;
+    height: 50px;
+    display: none;
+    margin-bottom: -50px;
+}
+.bmc-emote-buttons-container{
+    display: flex;
+    position: relative;
+    flex-direction: row;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    width: 300px;
+    height: 24px;
+    margin-top: 76px;
+}
+.bmc-emote-buttons-container img {
+    cursor: pointer;
+}
+
+.bmc-remove-emote-button, .bmc-accept-emote-set-button{
+    width: 24px;
+    height: 24px;
+    margin-left: 26px;
+    cursor: pointer;
+}
+.bmc-remove-emote-button:hover, .bmc-accept-emote-set-button:hover, .bmc-accept-emote-button:hover, .bmc-emote-buttons-container img:hover, .bmc-emote-menu-button:hover{
+    filter: drop-shadow(0px 0px 2px white);
+}
+.bmc-accept-emote-button{
+    width: 24px;
+    height: 24px;
+    padding-left: 16px;
+    cursor: pointer;
+}
+
+.bmc-remove-emote-name-input, .bmc-load-emote-set-input{
+    width: 250px;
+    height: 24px;
+    padding: 0;
+    margin: 0;
+    border-radius: 12px;
+    border-width: 0px;
+    background-color: var(--bmc-button-bg-color);
+    color: var(--bmc-text-color);
+    padding-left: 10px;
+    padding-right: 10px;
+}
+.bmc-remove-emote-name-input{
+    pointer-events: none;
+}
+.bmc-add-emote-name-input{
+    width: 60px;
+    height: 24px;
+    padding: 0;
+    margin: 0;
+    border-radius: 12px;
+    border-width: 0px;
+    background-color: var(--bmc-button-bg-color);
+    color: var(--bmc-text-color);
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-right: 15px;
+}
+.bmc-add-emote-code-input{
+    width: 160px;
+    height: 24px;
+    padding: 0;
+    margin: 0;
+    border-radius: 12px;
+    border-width: 0px;
+    background-color: var(--bmc-button-bg-color);
+    color: var(--bmc-text-color);
+    padding-left: 10px;
+    padding-right: 10px;
+}
