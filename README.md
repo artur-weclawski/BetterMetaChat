@@ -5,9 +5,9 @@ Extension to chrome based browsers adding emotes to Meta communicators.
 * [General info](#general-info)
   * [Functions](#functions)
   * [Preview](#preview)
-* [Instalation](#instalation)
+* [Installation](#installation)
   * [Requirements](#requirements)
-  * [Instalation process](#instalation-process)
+  * [Installation process](#installation-process)
 * [Changelog](#changelog)
 * [Known issues](#known-issues)
 
@@ -30,11 +30,11 @@ Icons for buttons taken from https://icon-sets.iconify.design/material-symbols/.
 ### Preview
 ...
 
-## Instalation
+## Installation
 ### Requirements
 Browser supporting Chrome extensions. Minimum requirments for css (anchoring) support: Edge 125, Chrome 125, Opera 111.
 
-### Instalation process
+### Installation process
 ...
 
 ## Changelog
