@@ -31,8 +31,6 @@ Icons for buttons taken from https://icon-sets.iconify.design/material-symbols/.
 ...
 
 ## Instalation
-...
-
 ### Requirements
 Browser supporting Chrome extensions. Minimum requirments for css (anchoring) support: Edge 125, Chrome 125, Opera 111.
 
