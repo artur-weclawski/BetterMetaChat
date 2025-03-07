@@ -38,6 +38,10 @@ Browser supporting Chrome extensions. Minimum requirments for css (anchoring) su
 ...
 
 ## Changelog
+### v1.2.1 (07-03-2025)
+* Fixed bug with emote validation.
+
+---
 
 ### v1.2 (05-03-2025)
 * Added menu with previews of all emotes.
@@ -46,7 +50,6 @@ Browser supporting Chrome extensions. Minimum requirments for css (anchoring) su
 * Added styling for light and dark mode.
 * Added pasting emotes from menu directly to chat.
 * Fixed most validation problems and bugs from previous versions<!-- (added few more)-->.
-
 
 ---
 

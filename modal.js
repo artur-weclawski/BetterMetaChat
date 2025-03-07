@@ -131,7 +131,7 @@ function createAddEmoteContainer(modal){
   acceptEmoteButton.addEventListener('click',() =>{
     const clearedEmoteCode = emoteCode.value.split('/').pop();
     const emoteCodeRegEx = /^[a-zA-Z0-9]+$/;
-    if(emoteCodeRegEx.test(clearedEmoteCode) && (clearedEmoteCode.length === 26 && (emoteName.length > 0))){
+    if(emoteCodeRegEx.test(clearedEmoteCode) && (emoteName.value.length > 0)){
       // Add new emote to set.
       emotes.addEmote(emoteName.value, clearedEmoteCode);
       updateEmotesInStorage(emotes.getDictionary());
@@ -139,7 +139,7 @@ function createAddEmoteContainer(modal){
       // Rerender emotes in menu.
       modal.replaceChild(createContainerWithEmotes(emotes.getDictionary()), document.getElementById("emoteContainer"));
     }else{
-      alert('Provided wrong emote code or emote name.\nCode should contain 26 characters.\nYou can also paste link.\ne.g. https://7tv.app/emotes/01G10SNY8800087S6WDJRSJ2QE');
+      alert('Provided wrong emote code or emote name.\nYou can also paste link.\ne.g. https://7tv.app/emotes/01G10SNY8800087S6WDJRSJ2QE');
     }
 
   })
