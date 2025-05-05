@@ -35,7 +35,11 @@ Icons for buttons taken from https://icon-sets.iconify.design/material-symbols/.
 Browser supporting Chrome extensions. Minimum requirments for css (anchoring) support: Edge 125, Chrome 125, Opera 111.
 
 ### Installation process
-...
+* Download `.zip` and unzip it somewhere (if you delete unpacked folder, extension will stop working).
+* Open your `extension tab` in browser.
+* Allow `developer mode`.
+* Add extension by `Load unpacked` (or similar).
+* Active extension in extensions list.
 
 ## Changelog
 ### v1.2.1 (07-03-2025)
