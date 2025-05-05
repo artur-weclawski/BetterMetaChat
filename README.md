@@ -36,6 +36,8 @@ Browser supporting Chrome extensions. Minimum requirments for css (anchoring) su
 
 ### Installation process
 * Download `.zip` and unzip it somewhere (if you delete unpacked folder, extension will stop working).
+  * Click `Code` button.
+  * Click `Download .zip`.
 * Open your `extension tab` in browser.
 * Allow `developer mode`.
 * Add extension by `Load unpacked` (or similar).
