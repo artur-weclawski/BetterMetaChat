@@ -131,7 +131,7 @@ function initializeEmotes() {
 function replaceTextInMessages() {
     if (!emotes.getDictionary()) return;
     // Query selector with collected all message bubbles.
-    const messages = document.querySelectorAll('.html-div.xexx8yu.x4uap5.x18d9i69.xkhd6sd.x1gslohp.x11i5rnm.x12nagc.x1mh8g0r.x1yc453h.x126k92a');
+    const messages = document.querySelectorAll('.html-div.xexx8yu.xyri2b.x18d9i69.x1c1uobl.x1gslohp.x14z9mp.x12nagc.x1lziwak.x1yc453h.x126k92a');
     messages.forEach((message) => {
         message.childNodes.forEach((node) => {
             if (node.nodeType !== Node.TEXT_NODE) return;

@@ -38,6 +38,12 @@ Browser supporting Chrome extensions. Minimum requirments for css (anchoring) su
 ...
 
 ## Changelog
+
+### v1.2.2 (24-06-2025)
+* Updated querySelector to match changes in classes after Facebook update.
+
+---
+
 ### v1.2.1 (07-03-2025)
 * Fixed bug with emote validation.
 
